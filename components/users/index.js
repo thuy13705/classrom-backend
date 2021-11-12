@@ -4,7 +4,7 @@ const router = express.Router();
 
 const userController = require('./userController');
 
-router.post('/login',  userController.login);
+router.post('/login',passport.authenticate('local', {session: false}) , userController.login);
 
 router.post('/signup', userController.signup);
 

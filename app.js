@@ -1,5 +1,7 @@
 const createError = require('http-errors');
 const express = require('express');
+require("dotenv").config();
+
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -28,7 +30,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(session({secret:  'secret-cat'}));
+app.use(session({secret:  process.env.SESSION_SECRET}));
 app.use(passport.initialize());
 app.use(passport.session());
 

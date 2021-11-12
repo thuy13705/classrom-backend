@@ -1,7 +1,7 @@
 const { ObjectId } = require('mongodb');
 const { use } = require('passport');
 const userService = require('./userService');
-const passport = require('../../passport');
+const jwt = require('jsonwebtoken');
 
 exports.signup = async (req,res) =>
 {
@@ -15,23 +15,20 @@ exports.signup = async (req,res) =>
 
     const isUser  = await userService.checkUser(newUser.username);
     if (isUser)
-        messenger = "Tên đăng nhập đã được sử dụng";
+        message = "Tên đăng nhập đã được sử dụng";
     else
         await userService.addUser(newUser);
-    res.json(messenger);
+    res.json(message);
 }
 
 exports.login = (req,res) => {
-    console.log(res.locals);
-    console.log(req.user);
-    var messenger = "đã đăng nhập";
-    if (req.user)
-        res.json(messenger);
-        else
-        {
-            passport.authenticate('local', {
-            successFlash: console.log(2),
-            failureFlash: console.log(1),
-            });
-        }
+    res.json({
+        user : req.user,
+        token : jwt.sign({
+            id : req.user.id,
+            username : req.user.username
+        },
+        process.env.JWT_SECRET,{expiresIn: '1h'}
+        )
+    });
 }

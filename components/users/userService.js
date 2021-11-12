@@ -45,3 +45,8 @@ exports.addUser = async (newUser) =>
     })
     return userCollection;
 }
+
+exports.getUser= (id) =>{
+    const userCollection = db().collection('users');
+    return userCollection.findOne({_id: ObjectId(id)});
+}

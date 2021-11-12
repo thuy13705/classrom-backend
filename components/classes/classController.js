@@ -2,7 +2,8 @@ const classService = require('./classService');
 const { ObjectId } = require('mongodb');
 
 exports.classes = async (req, res, next) => {
-    
+    console.log(req.user);
+    console.log(res.locals);
     const classes = await classService.list();
     res.json(classes);
 }
