@@ -18,10 +18,19 @@ exports.checkLogin=async (Username, Password)=>
     return false;
 }
 
-exports.checkUser=async (Username)=>
+exports.checkUsername=async (Username)=>
 {
     const userCollection = db().collection('users');
     const user = await userCollection.findOne({username: Username});
+    if (!user)
+        return false;
+    return true;
+}
+
+exports.checkEmail=async (email)=>
+{
+    const userCollection = db().collection('users');
+    const user = await userCollection.findOne({email: email});
     if (!user)
         return false;
     return true;

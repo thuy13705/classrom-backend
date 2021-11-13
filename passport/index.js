@@ -20,7 +20,6 @@ opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = process.env.JWT_SECRET;
 
 passport.use(new JwtStrategy(opts, function(jwt_payload, done){
-    console.log(jwt_payload);
     return done(null, {id: jwt_payload.id, username: jwt_payload.username});
 }));
 

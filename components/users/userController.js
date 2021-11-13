@@ -5,18 +5,20 @@ const jwt = require('jsonwebtoken');
 
 exports.signup = async (req,res) =>
 {
-    var messenger = "success";
+    var message = "success";
     const newUser = {
         username: req.body.username,
         email: req.body.email,
-        password: req.body.password,
-        teacher: req.body.teacher
+        password: req.body.password
     };
 
-    const isUser  = await userService.checkUser(newUser.username);
+    const isUser  = await userService.checkUsername(newUser.username);
+    const isEmail  = await userService.checkEmail(newUser.email);
     if (isUser)
         message = "Tên đăng nhập đã được sử dụng";
-    else
+    else if (isEmail)
+        message = "Email đã sử dụng";
+    else 
         await userService.addUser(newUser);
     res.json(message);
 }

@@ -40,6 +40,7 @@ app.use(function (req, res, next){
 });
 
 app.use('/', indexRouter);
+//app.use('/classes', passport.authenticate('jwt', {session: false}), classesRouter);
 app.use('/classes', classesRouter);
 app.use('/users', usersRouter);
 
