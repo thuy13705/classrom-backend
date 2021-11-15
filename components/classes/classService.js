@@ -12,3 +12,9 @@ exports.post = async (filter) => {
     await classesCollection.insertOne(filter);
     return true;
 }
+
+exports.detail = async (id) => {
+    const classesCollection = db().collection('classes');
+    const _class = await classesCollection.findOne({_id: ObjectId(id)});
+    return _class;
+}

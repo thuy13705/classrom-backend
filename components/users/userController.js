@@ -2,6 +2,7 @@ const { ObjectId } = require('mongodb');
 const { use } = require('passport');
 const userService = require('./userService');
 const jwt = require('jsonwebtoken');
+const { json } = require('express');
 
 exports.signup = async (req,res) =>
 {
@@ -27,10 +28,16 @@ exports.login = (req,res) => {
     res.json({
         user : req.user,
         token : jwt.sign({
-            id : req.user.id,
+            id : req.user._id,
             username : req.user.username
         },
         process.env.JWT_SECRET,{expiresIn: '1h'}
         )
     });
+}
+
+exports.logout = async (req,res) => {
+    await jwt.decode(req.headers.authorization);
+    console.log(req.user);
+    res.json("destroy");
 }

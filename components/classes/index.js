@@ -8,4 +8,6 @@ router.get('/', classController.classes);
 
 router.post('/', classController.postClass);
 
+router.get('/:id', classController.detail);
+
 module.exports = router;

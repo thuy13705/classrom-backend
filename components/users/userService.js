@@ -10,7 +10,7 @@ exports.checkLogin=async (Username, Password)=>
     if (!user)
         return false;
     let checkPassword= await bcrypt.compare(Password, user.password);
-    if (checkPassword && (String(user.status)=="active"))
+    if (checkPassword)
     {
         console.log('username: ',user.username);
         return user;
@@ -45,9 +45,7 @@ exports.addUser = async (newUser) =>
         const user = {
             username: newUser.username,
             password: hash,
-            email: newUser.email,
-            status: 'active',
-            teacher: newUser.teacher
+            email: newUser.email
         }
         userCollection.insertOne(user);
         });
