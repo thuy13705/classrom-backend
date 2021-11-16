@@ -53,7 +53,7 @@ exports.addUser = async (newUser) =>
     return userCollection;
 }
 
-exports.getUser= (id) =>{
+exports.getUser= async (id) =>{
     const userCollection = db().collection('users');
-    return userCollection.findOne({_id: ObjectId(id)});
+    return await userCollection.findOne({_id: ObjectId(id)});
 }

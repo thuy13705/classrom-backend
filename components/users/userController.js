@@ -37,6 +37,10 @@ exports.login = (req,res) => {
 }
 
 exports.logout = async (req,res) => {
+    // if (req.session.user) {
+    //     req.session.user = null;
+    //   }
+    //   req.logout();
     await jwt.decode(req.headers.authorization);
     console.log(req.user);
     res.json("destroy");
