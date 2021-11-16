@@ -36,12 +36,41 @@ exports.login = (req,res) => {
     });
 }
 
-exports.logout = async (req,res) => {
-    // if (req.session.user) {
-    //     req.session.user = null;
-    //   }
-    //   req.logout();
-    await jwt.decode(req.headers.authorization);
-    console.log(req.user);
-    res.json("destroy");
+// exports.logout = async (req,res) => {
+//     // if (req.session.user) {
+//     //     req.session.user = null;
+//     //   }
+//     //   req.logout();
+//     await jwt.decode(req.headers.authorization);
+//     console.log(req.user);
+//     res.json("destroy");
+// }
+
+exports.getProfile= async (req, res)=>{
+    const user = await userService.getUser(req.user.id);
+    res.json(user);
 }
+
+exports.postProfileEdit = async (req, res) => {
+    const userCollection = db().collection('users');
+    try {
+      const response = {};
+      const emailExist = await userCollection.findOne({ email: req.body.email });
+      if (emailExist) {
+        response.message = "Email";
+        const result = await userCollection.findOneAndUpdate({ _id: req.user._id },
+          { nameUser: req.body.name }, { upsert: true }).exec();
+        response.newUser = result;
+      }
+      else {
+        response.message = "Success";
+        const result = await userCollection.findOneAndUpdate({ _id: req.user._id },
+          { nameUser: req.body.name, email: req.body.email }, { upsert: true }).exec();
+          response.newUser = result;
+      }
+      res.send(response);
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  
+  }

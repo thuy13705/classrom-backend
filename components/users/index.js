@@ -10,4 +10,8 @@ router.post('/signup', userController.signup);
 
 router.get('/logout',passport.authenticate('jwt', {session: false}), userController.logout);
 
+router.get('/profile', passport.authenticate('jwt', {session: false}),userController.getProfile);
+
+router.post('/profile',passport.authenticate('jwt', {session: false}), userController.postProfileEdit);
+
 module.exports = router;
