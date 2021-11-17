@@ -8,6 +8,6 @@ router.post('/login',passport.authenticate('local', {session: false}) , userCont
 
 router.post('/signup', userController.signup);
 
-router.get('/logout',passport.authenticate('jwt', {session: false}), userController.logout);
+router.post('/loginGoogle', userController.loginGoogle);
 
 module.exports = router;

@@ -22,18 +22,14 @@ exports.checkUsername=async (Username)=>
 {
     const userCollection = db().collection('users');
     const user = await userCollection.findOne({username: Username});
-    if (!user)
-        return false;
-    return true;
+    return user;
 }
 
 exports.checkEmail=async (email)=>
 {
     const userCollection = db().collection('users');
     const user = await userCollection.findOne({email: email});
-    if (!user)
-        return false;
-    return true;
+    return user;
 }
 
 exports.addUser = async (newUser) =>
@@ -51,6 +47,30 @@ exports.addUser = async (newUser) =>
         });
     })
     return userCollection;
+}
+
+exports.updateUser = async (id, newUser) =>{
+    const userCollection = db().collection('users');
+    const saltRounds = 10;
+    await bcrypt.genSalt(saltRounds, function(err, salt){
+        bcrypt.hash(newUser.password, salt , function (err, hash) {
+        const user = { $set: {
+            username: newUser.username,
+            password: hash,
+            email: newUser.email
+        }}
+        userCollection.updateOne({_id: id}, user);
+        });
+    })
+    return true;
+}
+
+exports.addUserEmail = async (newUser) =>
+{
+    const userCollection = db().collection('users');
+    await userCollection.insertOne(newUser);
+    const User = await userCollection.findOne({email: newUser.email});
+    return User;
 }
 
 exports.getUser= (id) =>{

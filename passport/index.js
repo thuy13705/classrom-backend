@@ -20,7 +20,7 @@ opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = process.env.JWT_SECRET;
 
 passport.use(new JwtStrategy(opts, function(jwt_payload, done){
-    return done(null, {id: jwt_payload.id, username: jwt_payload.username});
+    return done(null, {id: jwt_payload.id, gmail: jwt_payload.gmail});
 }));
 
 passport.serializeUser(function(user, done)
@@ -34,8 +34,6 @@ passport.deserializeUser(function(id,done)
         done(null, user);
     })
 })
-
-
 
 
 module.exports = passport;
