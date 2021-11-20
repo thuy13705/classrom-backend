@@ -18,8 +18,13 @@ exports.signup = async (req,res) =>
     const isEmail  = await User.findOne({email:newUser.email});
     if (isUser)
         message = "Tên đăng nhập đã được sử dụng";
-    else if (isEmail)
+    else if (isEmail){
+        if (!isEmail.username){
+            await userService.updateUser(isEmail._id, newUser);
+        }
+        else
         message = "Email đã sử dụng";
+    }
     else 
         await newUser.save();
     res.json(message);
@@ -30,7 +35,7 @@ exports.login = (req,res) => {
         user : req.user,
         token : jwt.sign({
             id : req.user._id,
-            username : req.user.username
+            email : req.user.email
         },
         process.env.JWT_SECRET,{expiresIn: '1h'}
         )
@@ -75,3 +80,25 @@ exports.postProfileEdit = async (req, res) => {
     res.status(500).send(error);
   }
   }
+exports.loginGoogle = async (req,res) => {
+    const newUser = {
+        email: req.body.email
+    };
+    const isEmail  = await userService.checkEmail(newUser.email);
+    let curUser;
+
+    if (!isEmail){
+        curUser = await userService.addUserEmail(newUser);
+    }
+    else curUser =  isEmail;
+
+    res.json({
+        email : curUser.email,
+        token : jwt.sign({
+            id : curUser._id,
+            email : curUser.email
+        },
+        process.env.JWT_SECRET,{expiresIn: '1h'}
+        )
+    });
+}

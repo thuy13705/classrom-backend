@@ -14,4 +14,7 @@ router.get('/profile', passport.authenticate('jwt', {session: false}),userContro
 
 router.post('/profile',passport.authenticate('jwt', {session: false}), userController.postProfileEdit);
 
+router.post('/loginGoogle', userController.loginGoogle);
+
+
 module.exports = router;
