@@ -1,19 +1,20 @@
 const {db} = require('../../dal/db');
 const { ObjectId, Int32} = require('mongodb');
 const bcrypt = require('bcrypt');
+const User=require('./UserModel');
+
 
 
 exports.checkLogin=async (Username, Password)=>
 {
-    const userCollection = db().collection('users');
-    const user = await userCollection.findOne({username: Username});
-    if (!user)
+    const isUser = await User.findOne({username: Username});
+    if (!isUser)
         return false;
-    let checkPassword= await bcrypt.compare(Password, user.password);
+    let checkPassword= await bcrypt.compare(Password, isUser.password);
     if (checkPassword)
     {
-        console.log('username: ',user.username);
-        return user;
+        console.log('username: ',isUser.username);
+        return isUser;
     }
     return false;
 }

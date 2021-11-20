@@ -2,7 +2,8 @@ const { ObjectId } = require('mongodb');
 const { use } = require('passport');
 const userService = require('./userService');
 const jwt = require('jsonwebtoken');
-const { json } = require('express');
+const { json, response } = require('express');
+const User=require('./UserModel');
 
 exports.signup = async (req,res) =>
 {
@@ -13,14 +14,14 @@ exports.signup = async (req,res) =>
         password: req.body.password
     };
 
-    const isUser  = await userService.checkUsername(newUser.username);
-    const isEmail  = await userService.checkEmail(newUser.email);
+    const isUser  = await User.findOne({username:newUser.username});
+    const isEmail  = await User.findOne({email:newUser.email});
     if (isUser)
         message = "Tên đăng nhập đã được sử dụng";
     else if (isEmail)
         message = "Email đã sử dụng";
     else 
-        await userService.addUser(newUser);
+        await newUser.save();
     res.json(message);
 }
 
@@ -47,30 +48,30 @@ exports.login = (req,res) => {
 // }
 
 exports.getProfile= async (req, res)=>{
-    const user = await userService.getUser(req.user.id);
-    res.json(user);
+  console.log("hihi:");
+    const result = await User.findById(req.user.id);
+    console.log(result);
+    res.json(result);
 }
 
 exports.postProfileEdit = async (req, res) => {
-    const userCollection = db().collection('users');
-    try {
-      const response = {};
-      const emailExist = await userCollection.findOne({ email: req.body.email });
-      if (emailExist) {
-        response.message = "Email";
-        const result = await userCollection.findOneAndUpdate({ _id: req.user._id },
-          { nameUser: req.body.name }, { upsert: true }).exec();
-        response.newUser = result;
-      }
-      else {
-        response.message = "Success";
-        const result = await userCollection.findOneAndUpdate({ _id: req.user._id },
-          { nameUser: req.body.name, email: req.body.email }, { upsert: true }).exec();
-          response.newUser = result;
-      }
-      res.send(response);
-    } catch (error) {
-      res.status(500).send(error);
+  try {
+    const response = {};
+    const emailExist = await User.findOne({ email: req.body.email });
+    if (emailExist) {
+      response.message = "Email";
+      const result = await User.findOneAndUpdate({ _id: req.user._id },
+        { nameUser: req.body.name }, { upsert: true }).exec();
+      response.newUser = result;
     }
-  
+    else {
+      response.message = "Success";
+      const result = await User.findOneAndUpdate({ _id: req.user._id },
+        { nameUser: req.body.name, email: req.body.email }, { upsert: true }).exec();
+        response.newUser = result;
+    }
+    res.send(response);
+  } catch (error) {
+    res.status(500).send(error);
+  }
   }

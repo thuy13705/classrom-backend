@@ -8,7 +8,7 @@ router.post('/login',passport.authenticate('local', {session: false}) , userCont
 
 router.post('/signup', userController.signup);
 
-router.get('/logout',passport.authenticate('jwt', {session: false}), userController.logout);
+// router.get('/logout',passport.authenticate('jwt', {session: false}), userController.logout);
 
 router.get('/profile', passport.authenticate('jwt', {session: false}),userController.getProfile);
 
