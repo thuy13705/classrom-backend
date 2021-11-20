@@ -2,7 +2,8 @@ const passport = require('passport'),
 LocalStrategy = require('passport-local').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const { ExtractJwt } = require('passport-jwt');
-const userService = require('../components/users/userService');
+const User = require('./../components/users/UserModel');
+
 
 passport.use(new LocalStrategy(
     async function(username, password, done){
@@ -30,9 +31,11 @@ passport.serializeUser(function(user, done)
 
 passport.deserializeUser(function(id,done)
 {
-    userService.getUser(id).then((user)=>{
-        done(null, user);
-    })
+    // userService.getUser(id).then((user)=>{
+        
+    // })
+    const result=User.findOne({_id: id}).exec();
+    done(null, user);
 })
 
 
