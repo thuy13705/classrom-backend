@@ -2,7 +2,6 @@
 const mongoose=require('mongoose');
 const Schema=mongoose.Schema;
 
-
 var classSchema=new Schema({
     nameClass:{type:String, default:""},
     students: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
@@ -10,4 +9,4 @@ var classSchema=new Schema({
     category:{type:String, default:""},
     room:{type:String, default:""}
 });
-module.exports = mongoose.model('ClassRoom', classSchema);
+module.exports = mongoose.model('Class', classSchema);

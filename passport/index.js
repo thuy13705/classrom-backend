@@ -2,6 +2,7 @@ const passport = require('passport'),
 LocalStrategy = require('passport-local').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const { ExtractJwt } = require('passport-jwt');
+const userService=require('./../components/users/userService');
 const User = require('./../components/users/UserModel');
 
 
@@ -10,9 +11,9 @@ passport.use(new LocalStrategy(
         const user = await userService.checkLogin(username, password);
         if (!user)
             return done(null, false, {message: 'Incorrect username or password.'});
-        
-        console.log(user);
-        return done(null, user);
+        else{
+            return done(null, user);
+        }
     }
 ));
 
@@ -26,15 +27,14 @@ passport.use(new JwtStrategy(opts, function(jwt_payload, done){
 
 passport.serializeUser(function(user, done)
 {
+    console.log(user._id)
     done(null,user._id);
 });
 
 passport.deserializeUser(function(id,done)
 {
-    // userService.getUser(id).then((user)=>{
-        
-    // })
-    const result=User.findOne({_id: id}).exec();
+    console.log(id)
+    const user=User.findById(id).exec();
     done(null, user);
 })
 

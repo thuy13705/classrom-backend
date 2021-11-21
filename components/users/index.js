@@ -8,7 +8,9 @@ router.post('/login',passport.authenticate('local', {session: false}) , userCont
 
 router.post('/signup', userController.signup);
 
-// router.get('/logout',passport.authenticate('jwt', {session: false}), userController.logout);
+router.post('/password', passport.authenticate('jwt', {session: false}),userController.postChangePassword);
+
+router.post('/studentID', passport.authenticate('jwt', {session: false}),userController.postStudentID);
 
 router.get('/profile', passport.authenticate('jwt', {session: false}),userController.getProfile);
 
