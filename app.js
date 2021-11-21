@@ -6,7 +6,6 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-const { MongoClient } = require("mongodb");
 const passport = require('./passport');
 const session= require("express-session");
 
@@ -41,6 +40,8 @@ app.use(function (req, res, next){
 
 app.use('/', indexRouter);
 app.use('/classes', passport.authenticate('jwt', {session: false}), classesRouter);
+// app.use('/classes', classesRouter);
+
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
