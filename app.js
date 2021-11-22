@@ -12,6 +12,8 @@ const session= require("express-session");
 const indexRouter = require('./routes/index');
 const usersRouter = require('./components/users');
 const classesRouter = require('./components/classes');
+// const joinRouter = require('./components/classes/classService');
+
 
 const app = express();
 
@@ -40,7 +42,7 @@ app.use(function (req, res, next){
 
 app.use('/', indexRouter);
 app.use('/classes', passport.authenticate('jwt', {session: false}), classesRouter);
-// app.use('/classes', classesRouter);
+// app.use('/', joinRouter);
 
 app.use('/users', usersRouter);
 

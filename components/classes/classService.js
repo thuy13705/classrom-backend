@@ -26,3 +26,13 @@
 //     return result;
 //   }
   
+// const express = require('express');
+// const router = express.Router();
+
+// const classController = require('./classController');
+
+// router.get('/join/1/:id', classController.getLinkInviteStudent);
+
+// router.get('/join/0/:id', classController.getLinkInviteTeacher);
+
+// module.exports = router;

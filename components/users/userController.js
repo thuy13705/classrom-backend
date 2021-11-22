@@ -18,11 +18,6 @@ exports.signup = async (req, res) => {
     if (isUser)
         message = "Tên đăng nhập đã được sử dụng";
     else if (isEmail) {
-        if (!isEmail.username) {
-            const result = await User.findOneAndUpdate({ email: newUser.email },
-                { email: req.body.email }, { upsert: true }).exec();
-        }
-        else
             message = "Email đã sử dụng";
     }
     else{
@@ -57,13 +52,13 @@ exports.postProfileEdit = async (req, res) => {
         if (emailExist) {
             response.message = "Email";
             const result = await User.findOneAndUpdate({ _id: req.user.id },
-                { nameUser: req.body.name }, { upsert: true }).exec();
+                { username: req.body.name }, { upsert: true }).exec();
             response.newUser = result;
         }
         else {
             response.message = "Success";
             const result = await User.findOneAndUpdate({ _id: req.user.id },
-                { nameUser: req.body.name, email: req.body.email }, { upsert: true }).exec();
+                { username: req.body.name, email: req.body.email }, { upsert: true }).exec();
             response.newUser = result;
         }
         res.send(response);
