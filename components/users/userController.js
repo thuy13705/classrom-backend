@@ -2,7 +2,6 @@ const userService = require('./userService');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('./UserModel');
-const url = require('url');
 
 exports.signup = async (req, res) => {
     var message = "success";
