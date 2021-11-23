@@ -1,6 +1,7 @@
 const createError = require('http-errors');
 const express = require('express');
 require("dotenv").config();
+const url=require('url');
 
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -50,6 +51,7 @@ app.use('/users', usersRouter);
 app.use(function(req, res, next) {
   next(createError(404));
 });
+
 
 // error handler
 app.use(function(err, req, res, next) {

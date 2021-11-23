@@ -10,8 +10,8 @@ exports.classes = async (req, res, next) => {
   try {
     const response = {}
     const id = new mongoose.Types.ObjectId(req.user.id);
-    response.students = await Classes.find({ students: id }).exec();
-    response.teachers = await Classes.find({ teachers: id }).exec();
+    response.students = await Classes.find({ students: id }).populate('students').populate('teachers').exec();
+    response.teachers = await Classes.find({ teachers: id }).populate('teachers').populate('students').exec();
     res.send(response);
   } catch (e) {
     res.status(500).send(error);

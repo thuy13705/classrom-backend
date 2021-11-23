@@ -2,6 +2,7 @@ const userService = require('./userService');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('./UserModel');
+const url=require('url');
 
 exports.signup = async (req, res) => {
     var message = "success";
@@ -41,7 +42,6 @@ exports.login = (req, res) => {
 
 exports.getProfile = async (req, res) => {
     const result = await User.findById(req.user.id);
-    console.log(result);
     res.json(result);
 }
 
@@ -52,13 +52,13 @@ exports.postProfileEdit = async (req, res) => {
         if (emailExist) {
             response.message = "Email";
             const result = await User.findOneAndUpdate({ _id: req.user.id },
-                { username: req.body.name }, { upsert: true }).exec();
+                { name: req.body.name }, { upsert: true }).exec();
             response.newUser = result;
         }
         else {
             response.message = "Success";
             const result = await User.findOneAndUpdate({ _id: req.user.id },
-                { username: req.body.name, email: req.body.email }, { upsert: true }).exec();
+                { name: req.body.name, email: req.body.email }, { upsert: true }).exec();
             response.newUser = result;
         }
         res.send(response);
@@ -69,11 +69,18 @@ exports.postProfileEdit = async (req, res) => {
 
 exports.postChangePassword = async (req, res) => {
     try {
-        const salt = await bcrypt.genSalt(10);
-        const hashPass = await bcrypt.hashSync(req.body.password, salt);
-        console.log(hashPass);
-        const result = await User.findOneAndUpdate({ _id: req.user.id },
-            { password: hashPass}, { upsert: true }).exec();
+        const result="succcess"
+        const isUser = await User.findOne({_id: req.user.id});
+        let checkPassword= await bcrypt.compare(Password, isUser.password);
+        if (!checkPassword)
+            result="wrong";
+        else{
+                const salt = await bcrypt.genSalt(10);
+                const hashPass = await bcrypt.hashSync(req.body.password, salt);
+                console.log(hashPass);
+                const updateUser = await User.findOneAndUpdate({ _id: req.user.id },
+                    { password: hashPass}, { upsert: true }).exec();
+            }
         res.send(result);
     } catch (error) {
         res.status(500).send(error);
@@ -119,7 +126,7 @@ exports.loginGoogle = async (req, res) => {
             id: curUser._id,
             email: curUser.email
         },
-            process.env.JWT_SECRET, { expiresIn: '1h' }
+            process.env.JWT_SECRET
         )
     });
 }
