@@ -16,9 +16,9 @@ exports.signup = async (req, res) => {
     const isUser = await User.findOne({ username: newUser.username });
     const isEmail = await User.findOne({ email: newUser.email });
     if (isUser)
-        message = "Tên đăng nhập đã được sử dụng";
+        message = "username";
     else if (isEmail) {
-        message = "Email đã sử dụng";
+        message = "Email";
     }
     else {
         const result = await newUser.save();
