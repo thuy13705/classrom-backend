@@ -92,6 +92,8 @@ exports.sendMailStudent = async (req, res) => {
 
   const curClass = await Classes.findById(req.params.id);
   const curUser=await User.findById(req.user.id);
+  console.log(curClass);
+  console.log(curUser);
 
   const link='https://classrom-fe-midterm.herokuapp.com/invite/1/'+req.params.id
     const mailOptions = {
@@ -111,7 +113,7 @@ exports.sendMailStudent = async (req, res) => {
         <body>
             <div>
                 <p>Hi!</p>
-                <p>${curUser.username} (${curUser.mailuser}) invite you join in <b>${curClass.nameclass}</b></p>
+                <p>${curUser.name} (${curUser.email}) invite you join in <b>${curClass.nameClass}</b></p>
                 <br>
                 <button style="padding: 10px 20px;background-color: blue; border-radius:5px; border:none"><a
                         style=" color:white" href="${link}">Join</a></button>
@@ -161,7 +163,7 @@ exports.sendMailTeacher = async (req, res) => {
         <body>
             <div>
                 <p>Hi!</p>
-                <p>${curUser.username} (${curUser.mailuser}) invite you join in <b>${curClass.nameclass}</b></p>
+                <p>${curUser.name} (${curUser.email}) invite you join in <b>${curClass.nameClass}</b></p>
                 <br>
                 <button style="padding: 10px 20px;background-color: blue; border-radius:5px; border:none"><a
                         style=" color:white" href="${link}">Join</a></button>
