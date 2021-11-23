@@ -46,9 +46,17 @@ exports.detail = async (req, res, next) => {
 
 exports.getLinkInviteTeacher = async function (req, res, next) {
   try {
-    const result = await Classes.findOneAndUpdate({ _id: req.params.id }, { $push: { teachers: req.user._id } }).exec();
-    console.log(result);
-
+    let result="";
+    const id = new mongoose.Types.ObjectId(req.user.id);
+    const teachers = await Classes.find({_id:req.params.id,teachers: id }).populate('teachers').populate('students').exec();
+    const students = await Classes.find({_id:req.params.id,students: id }).populate('teachers').populate('students').exec();
+    if (teachers.length===0 && students.length===0){
+      result="success";
+      const updateClass = await Classes.findOneAndUpdate({ _id: req.params.id }, { $push: { teachers: req.user.id } }).exec();
+    }
+    else{
+      result="Exist";
+    }
     res.send(result);
   } catch (error) {
     res.status(500).send(error);
@@ -57,7 +65,17 @@ exports.getLinkInviteTeacher = async function (req, res, next) {
 
 exports.getLinkInviteStudent = async function (req, res, next) {
     try {
-      const result = await Classes.findOneAndUpdate({ _id: req.params.id }, { $push: { students: req.user.id } }).exec();
+      let result="";
+      const id = new mongoose.Types.ObjectId(req.user.id);
+      const teachers = await Classes.find({_id:req.params.id,teachers: id }).populate('teachers').populate('students').exec();
+      const students = await Classes.find({_id:req.params.id,students: id }).populate('teachers').populate('students').exec();
+      if (teachers.length===0 && students.length===0){
+        result="success";
+        const updateClass = await Classes.findOneAndUpdate({ _id: req.params.id }, { $push: { students: req.user.id } }).exec();
+      }
+      else{
+        result="Exist";
+      }
       res.send(result);
     } catch (error) {
       res.status(500).send(error);
@@ -96,7 +114,7 @@ exports.sendMailStudent = async (req, res) => {
       nameclass: curClass.nameClass,
       nameuser:curUser.username,
       emailuser:curUser.email,
-      link: 'http://127.0.0.1:3000/join/1/'+req.params.id
+      link: 'https://classrom-fe-midterm.herokuapp.com/g'+req.params.id
     };
     var htmlToSend = template(replacements);
     const mailOptions = {
@@ -150,7 +168,7 @@ exports.sendMailTeacher = async (req, res) => {
       nameclass: curClass.nameClass,
       nameuser:curUser.username,
       emailuser:curUser.email,
-      link: 'http://127.0.0.1:3000/join/1/'+req.params.id
+      link: 'https://classrom-fe-midterm.herokuapp.com/invite/0/'+req.params.id
     };
     var htmlToSend = template(replacements);
     const mailOptions = {

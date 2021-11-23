@@ -34,7 +34,7 @@ exports.login = (req, res) => {
             id: req.user._id,
             email: req.user.email
         },
-            process.env.JWT_SECRET, { expiresIn: '1h' }
+            process.env.JWT_SECRET
         )
     });
 }

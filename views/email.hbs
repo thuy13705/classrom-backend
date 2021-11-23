@@ -2,29 +2,8 @@
 <html>
 
 <head>
-    <title>Xem ví dụ</title>
     <style type="text/css">
-        table,
-        th,
-        td {
-            border: 1px solid #868585;
-        }
-
-        table {
-            border-collapse: collapse;
-        }
-
-        table tr:nth-child(odd) {
-            background-color: #eee;
-        }
-
-        table tr:nth-child(even) {
-            background-color: white;
-        }
-
-        table tr:nth-child(1) {
-            background-color: skyblue;
-        }
+     
     </style>
 </head>
 
@@ -33,18 +12,9 @@
         <p>Hi!</p>
         <p>{{nameuser}} ({{emailuser}}) invite you join in <b>{{nameclass}}</b></p>
         <br>
-         <table >
-        <tr>
-            <th>{{nameclass}}</th>
-        </tr>
-        <tr>
-            <td>
-                <button><a href="{{link}}">Join</a></button>
-            </td>
-        </tr>
-    </table>
+        <button style="padding: 10px 20px;background-color: blue; border-radius:5px; border:none"><a
+                style=" color:white" href="{{link}}">Join</a></button>
     </div>
-   
 </body>
 
 </html>
