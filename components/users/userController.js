@@ -113,7 +113,7 @@ exports.loginGoogle = async (req, res) => {
     else curUser = isEmail;
 
     res.json({
-        email: curUser.email,
+        user: curUser,
         token: jwt.sign({
             id: curUser._id,
             email: curUser.email
