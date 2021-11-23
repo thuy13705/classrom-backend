@@ -131,7 +131,7 @@ exports.sendMailStudent = async (req, res) => {
     });  
 }
 
-exports.sendMailStudent = async (req, res) => {
+exports.sendMailTeacher = async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -143,7 +143,7 @@ exports.sendMailStudent = async (req, res) => {
   const curClass = await Classes.findById(req.params.id);
   const curUser=await User.findById(req.user.id);
 
-  const link='https://classrom-fe-midterm.herokuapp.com/invite/1/'+req.params.id
+  const link='https://classrom-fe-midterm.herokuapp.com/invite/0/'+req.params.id
     const mailOptions = {
       from: process.env.Email,
       to: req.body.emailTarget,
