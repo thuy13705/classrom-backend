@@ -101,14 +101,13 @@ exports.postStudentID = async (req, res) => {
 
 
 exports.loginGoogle = async (req, res) => {
-    const newUser = {
-        email: req.body.email
-    };
-    const isEmail = await userService.checkEmail(newUser.email);
+    const newUser = new User();
+    newUser.email = req.body.email;
+    const isEmail = await User.findOne({email: req.body.email});
     let curUser;
 
     if (!isEmail) {
-        curUser = await userService.addUserEmail(newUser);
+        curUser = await newUser.save();
     }
     else curUser = isEmail;
 

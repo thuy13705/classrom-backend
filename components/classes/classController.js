@@ -114,7 +114,7 @@ exports.sendMailStudent = async (req, res) => {
       nameclass: curClass.nameClass,
       nameuser:curUser.username,
       emailuser:curUser.email,
-      link: 'https://classrom-fe-midterm.herokuapp.com/g'+req.params.id
+      link: 'https://classrom-fe-midterm.herokuapp.com/invite/1/'+req.params.id
     };
     var htmlToSend = template(replacements);
     const mailOptions = {
