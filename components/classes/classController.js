@@ -3,8 +3,6 @@ const mongoose = require('mongoose');
 const Classes = require('./ClassModel');
 const User=require('../users/UserModel')
 const nodemailer = require('nodemailer');
-const handlebars = require('handlebars');
-const fs = require('fs');
 
 exports.classes = async (req, res, next) => {
   try {
@@ -84,19 +82,6 @@ exports.getLinkInviteStudent = async function (req, res, next) {
 
 
 exports.sendMailStudent = async (req, res) => {
-  const readHTMLFile = function (path, callback) {
-    fs.readFile(path, { encoding: 'utf-8' }, function (err, html) {
-      if (err) {
-        callback(err);
-        throw err;
-
-      }
-      else {
-        callback(null, html);
-      }
-    });
-  };
-
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -108,20 +93,32 @@ exports.sendMailStudent = async (req, res) => {
   const curClass = await Classes.findById(req.params.id);
   const curUser=await User.findById(req.user.id);
 
-  readHTMLFile(__dirname + '../../../views/email.hbs', function (err, html) {
-    var template = handlebars.compile(html);
-    var replacements = {
-      nameclass: curClass.nameClass,
-      nameuser:curUser.username,
-      emailuser:curUser.email,
-      link: 'https://classrom-fe-midterm.herokuapp.com/invite/1/'+req.params.id
-    };
-    var htmlToSend = template(replacements);
+  const link='https://classrom-fe-midterm.herokuapp.com/invite/1/'+req.params.id
     const mailOptions = {
       from: process.env.Email,
       to: req.body.emailTarget,
       subject: 'Invite to class',
-      html:htmlToSend
+      html:`
+      <!DOCTYPE html>
+        <html>
+
+        <head>
+            <style type="text/css">
+            
+            </style>
+        </head>
+
+        <body>
+            <div>
+                <p>Hi!</p>
+                <p>${curUser.username} (${curUser.mailuser}) invite you join in <b>${curClass.nameclass}</b></p>
+                <br>
+                <button style="padding: 10px 20px;background-color: blue; border-radius:5px; border:none"><a
+                        style=" color:white" href="${link}">Join</a></button>
+            </div>
+        </body>
+
+        </html>`
     };
   
   
@@ -131,26 +128,10 @@ exports.sendMailStudent = async (req, res) => {
       } else {
         res.json('Email sent: ' + info.response);
       }
-    });
-  });
-
-  
+    });  
 }
 
-exports.sendMailTeacher = async (req, res) => {
-  const readHTMLFile = function (path, callback) {
-    fs.readFile(path, { encoding: 'utf-8' }, function (err, html) {
-      if (err) {
-        callback(err);
-        throw err;
-
-      }
-      else {
-        callback(null, html);
-      }
-    });
-  };
-
+exports.sendMailStudent = async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -162,20 +143,32 @@ exports.sendMailTeacher = async (req, res) => {
   const curClass = await Classes.findById(req.params.id);
   const curUser=await User.findById(req.user.id);
 
-  readHTMLFile(__dirname + '../../../views/email.hbs', function (err, html) {
-    var template = handlebars.compile(html);
-    var replacements = {
-      nameclass: curClass.nameClass,
-      nameuser:curUser.username,
-      emailuser:curUser.email,
-      link: 'https://classrom-fe-midterm.herokuapp.com/invite/0/'+req.params.id
-    };
-    var htmlToSend = template(replacements);
+  const link='https://classrom-fe-midterm.herokuapp.com/invite/1/'+req.params.id
     const mailOptions = {
       from: process.env.Email,
       to: req.body.emailTarget,
       subject: 'Invite to class',
-      html:htmlToSend
+      html:`
+      <!DOCTYPE html>
+        <html>
+
+        <head>
+            <style type="text/css">
+            
+            </style>
+        </head>
+
+        <body>
+            <div>
+                <p>Hi!</p>
+                <p>${curUser.username} (${curUser.mailuser}) invite you join in <b>${curClass.nameclass}</b></p>
+                <br>
+                <button style="padding: 10px 20px;background-color: blue; border-radius:5px; border:none"><a
+                        style=" color:white" href="${link}">Join</a></button>
+            </div>
+        </body>
+
+        </html>`
     };
   
   
@@ -185,8 +178,6 @@ exports.sendMailTeacher = async (req, res) => {
       } else {
         res.json('Email sent: ' + info.response);
       }
-    });
-  });
-
+    });  
 }
 
