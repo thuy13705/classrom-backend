@@ -2,27 +2,27 @@ const userService = require('./userService');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('./UserModel');
-const url=require('url');
+const url = require('url');
 
 exports.signup = async (req, res) => {
     var message = "success";
-     const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(10);
     const hashPass = await bcrypt.hashSync(req.body.password, salt);
 
     const newUser = new User();
-    newUser.username= req.body.username;
-    newUser.email= req.body.email;
-    newUser.password= hashPass;
+    newUser.username = req.body.username;
+    newUser.email = req.body.email;
+    newUser.password = hashPass;
 
     const isUser = await User.findOne({ username: newUser.username });
     const isEmail = await User.findOne({ email: newUser.email });
     if (isUser)
         message = "Tên đăng nhập đã được sử dụng";
     else if (isEmail) {
-            message = "Email đã sử dụng";
+        message = "Email đã sử dụng";
     }
-    else{
-        const result=await newUser.save();
+    else {
+        const result = await newUser.save();
     }
     res.json(message);
 }
@@ -47,21 +47,9 @@ exports.getProfile = async (req, res) => {
 
 exports.postProfileEdit = async (req, res) => {
     try {
-        const response = {};
-        const emailExist = await User.findOne({ email: req.body.email });
-        if (emailExist) {
-            response.message = "Email";
-            const result = await User.findOneAndUpdate({ _id: req.user.id },
-                { name: req.body.name }, { upsert: true }).exec();
-            response.newUser = result;
-        }
-        else {
-            response.message = "Success";
-            const result = await User.findOneAndUpdate({ _id: req.user.id },
-                { name: req.body.name, email: req.body.email }, { upsert: true }).exec();
-            response.newUser = result;
-        }
-        res.send(response);
+        const result = await User.findOneAndUpdate({ _id: req.user.id },
+            { name: req.body.name, gender: req.body.gender }, { upsert: true }).exec();
+        res.send(result);
     } catch (error) {
         res.status(500).send(error);
     }
@@ -69,19 +57,19 @@ exports.postProfileEdit = async (req, res) => {
 
 exports.postChangePassword = async (req, res) => {
     try {
-        const result="succcess"
-        const isUser = await User.findOne({_id: req.user.id});
-        let checkPassword= await bcrypt.compare(Password, isUser.password);
+        let result = "succcess"
+        const isUser = await User.findOne({ _id: req.user.id });
+        let checkPassword = await bcrypt.compare(req.body.password, isUser.password);
+        console.log(checkPassword);
         if (!checkPassword)
-            result="wrong";
-        else{
-                const salt = await bcrypt.genSalt(10);
-                const hashPass = await bcrypt.hashSync(req.body.password, salt);
-                console.log(hashPass);
-                const updateUser = await User.findOneAndUpdate({ _id: req.user.id },
-                    { password: hashPass}, { upsert: true }).exec();
-            }
-        res.send(result);
+            result = "wrong";
+        else {
+            const salt = await bcrypt.genSalt(10);
+            const hashPass = await bcrypt.hashSync(req.body.newpass, salt);
+            const updateUser = await User.findOneAndUpdate({ _id: req.user.id },
+                { password: hashPass }, { upsert: true }).exec();
+        }
+        res.json(result);
     } catch (error) {
         res.status(500).send(error);
     }
@@ -89,18 +77,22 @@ exports.postChangePassword = async (req, res) => {
 
 exports.postStudentID = async (req, res) => {
     try {
-        const response = {};
-        const emailExist = await User.findOne({ studentID: req.body.studentID });
-        if (emailExist) {
-            response.message = "Exist";
-        }
+        let result = "success";
+        const isUser = await User.findOne({ _id: req.user.id });
+        let checkPassword = await bcrypt.compare(req.body.password, isUser.password);
+        if (!checkPassword)
+            result = "wrong";
         else {
-            response.message = "Success";
-            const result = await User.findOneAndUpdate({ _id: req.user.id },
-                { studentID: req.body.studentID }, { upsert: true }).exec();
-            response.newUser = result;
+            const student = await User.findOne({ studentID: req.body.studentID });
+            if (student) {
+                result = "Exist";
+            }
+            else {
+                const users = await User.findOneAndUpdate({ _id: req.user.id },
+                    { studentID: req.body.studentID }, { upsert: true }).exec();
+            }
         }
-        res.send(response);
+        res.json(result);
     } catch (error) {
         res.status(500).send(error);
     }
