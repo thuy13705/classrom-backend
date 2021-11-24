@@ -77,12 +77,7 @@ exports.postChangePassword = async (req, res) => {
 exports.postStudentID = async (req, res) => {
     try {
         let result = "success";
-        const isUser = await User.findOne({ _id: req.user.id });
-        let checkPassword = await bcrypt.compare(req.body.password, isUser.password);
-        if (!checkPassword)
-            result = "wrong";
-        else {
-            const student = await User.findOne({ studentID: req.body.studentID });
+        const student = await User.findOne({ studentID: req.body.studentID });
             if (student) {
                 result = "Exist";
             }
@@ -90,7 +85,6 @@ exports.postStudentID = async (req, res) => {
                 const users = await User.findOneAndUpdate({ _id: req.user.id },
                     { studentID: req.body.studentID }, { upsert: true }).exec();
             }
-        }
         res.json(result);
     } catch (error) {
         res.status(500).send(error);
