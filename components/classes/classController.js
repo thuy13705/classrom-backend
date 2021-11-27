@@ -1,4 +1,3 @@
-const classService = require('./classService');
 const mongoose = require('mongoose');
 const Classes = require('./ClassModel');
 const User=require('../users/UserModel')
@@ -34,8 +33,7 @@ exports.detail = async (req, res, next) => {
   var id = req.params.id;
   console.log(id);
   try {
-    const result = await Classes.findOne({ _id: id }).populate('teachers').populate('students').exec();
-    console.log(result);
+    const result = await Classes.findOne({ _id: id }).populate('teachers').populate('students').populate('grades').exec();
     res.send(result);
   } catch (e) {
     res.status(500).send(e);

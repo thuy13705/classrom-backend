@@ -13,7 +13,7 @@ const session= require("express-session");
 const indexRouter = require('./routes/index');
 const usersRouter = require('./components/users');
 const classesRouter = require('./components/classes');
-// const joinRouter = require('./components/classes/classService');
+const gradeRouter = require('./components/grade');
 
 
 const app = express();
@@ -43,7 +43,7 @@ app.use(function (req, res, next){
 
 app.use('/', indexRouter);
 app.use('/classes', passport.authenticate('jwt', {session: false}), classesRouter);
-// app.use('/', joinRouter);
+app.use('/grade', passport.authenticate('jwt', {session: false}),gradeRouter);
 
 app.use('/users', usersRouter);
 
