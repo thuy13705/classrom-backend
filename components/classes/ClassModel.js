@@ -8,7 +8,6 @@ var classSchema=new Schema({
     teachers: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
     category:{type:String, default:""},
     room:{type:String, default:""},
-    studentLink:{type:String, default:""},
-    teacherLink:{type:String, default:""}
+    grades:[{ type: mongoose.Types.ObjectId, ref: 'Grade' }]
 });
 module.exports = mongoose.model('Class', classSchema);
