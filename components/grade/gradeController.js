@@ -28,3 +28,27 @@ exports.postAddGrade = async function (req, res) {
     res.status(500).send(error);
   }
 }
+
+exports.postDeleteGrade = async function (req, res) {
+  try{
+  let message = "";
+    Classes.findOne({_id: req.params.id}, function(err, classes){
+      if(!err){
+        Grade.findOneAndDelete({_id: req.body.id}, function(error, grade){
+          if(!error){
+            Classes.findOneAndUpdate({_id: req.params.id}, {totalGrade: classes.totalGrade - grade.point, 
+                                        $pull: {grades: req.body.id}}, {upsert: true}).exec()
+          }
+        })
+        message = "succcess";
+      }
+      else{
+        message = "fail";
+      }
+    })
+    res.send(message);
+
+  }catch(error){
+    res.status(500).send(error);
+  }
+}
