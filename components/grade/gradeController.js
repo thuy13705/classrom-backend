@@ -57,16 +57,20 @@ exports.sort = async (req, res) =>{
 exports.edit = async (req, res) =>{
   try {
     let message = "";
-
-    console.log(req.body);
-
     const newGrade = new Grade();
     newGrade.name = req.body.name;
     newGrade.point = req.body.point;
 
+    const _grade = await Grade.findOne({_id: req.body.id});
+
     const result = await Grade.findOneAndUpdate({_id: req.body.id}, {name: req.body.name, point: req.body.point}, { upsert: true }).exec();
     if (result) {
       message = "success";
+      Classes.findOne({_id: req.params.id}, function(err, classes){
+        if (!err){
+          Classes.findOneAndUpdate({_id: req.params.id}, {totalGrade: classes.totalGrade - _grade.point + newGrade.point}, {upsert: true}).exec()
+        }
+      })
     }
     else {
       message = "fail";
