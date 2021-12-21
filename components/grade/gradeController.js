@@ -102,3 +102,35 @@ exports.postDeleteGrade = async function (req, res) {
     res.status(500).send(error);
   }
 }
+
+exports.pointAllGrade = async (req, res) =>{
+  try {
+    let message = "";
+
+    const result = await Grade.findOne({_id: req.params.id});
+
+    const datas = req.body.datas;
+
+    if (result){
+      for (data of datas){
+        let tmp = true;
+        for (point of result.pointStudent)
+          if(data.studentID === point.studentID)
+            {
+              tmp=false;
+              point.point = data.point;
+              break;
+            }
+        if (tmp) 
+            result.pointStudent.push(data);
+      }
+      Grade.findOneAndUpdate({_id: req.params.id}, {pointStudent: result.pointStudent}, {upsert: true}).exec();
+    }
+    else {
+      message = "fail";
+    }
+    res.send(message);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}

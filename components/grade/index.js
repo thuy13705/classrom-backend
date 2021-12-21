@@ -10,4 +10,6 @@ router.post('/sort/:id',gradeController.sort);
 
 router.post('/edit/:id',gradeController.edit);
 
+router.post('/pushAllPoint/:id', gradeController.pointAllGrade);
+
 module.exports = router;

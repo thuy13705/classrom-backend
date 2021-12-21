@@ -18,4 +18,6 @@ router.post('/sendMailStudent/:id', classController.sendMailStudent);
 
 router.post('/sendMailTeacher/:id', classController.sendMailTeacher);
 
+router.post('/boardGrade/:id', classController.boardGrade);
+
 module.exports = router;
