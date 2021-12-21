@@ -9,6 +9,7 @@ var classSchema=new Schema({
     category:{type:String, default:""},
     room:{type:String, default:""},
     grades:[{ type: mongoose.Types.ObjectId, ref: 'Grade' }],
+    boardGrade:[],
     totalGrade:{type:Number,default:0},
 });
 module.exports = mongoose.model('Class', classSchema);

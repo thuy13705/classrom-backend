@@ -31,9 +31,21 @@ exports.postClass = async (req, res) => {
 
 exports.detail = async (req, res, next) => {
   var id = req.params.id;
-  console.log(id);
   try {
     const result = await Classes.findOne({ _id: id }).populate('teachers').populate('students').populate('grades').exec();
+    for (grade of result.boardGrade){
+      grade.point = [];
+      for (_grade of result.grades)
+      {
+        for (point of _grade.pointStudent){
+          if (point.studentID === grade.studentID)
+            {
+              grade.point.push({pointGrade: _grade.point, point: point.point});
+              break
+            }
+        }
+      }
+    }
     res.send(result);
   } catch (e) {
     res.status(500).send(e);
@@ -181,3 +193,27 @@ exports.sendMailTeacher = async (req, res) => {
     });  
 }
 
+exports.boardGrade = async (req, res) =>{
+  const id = req.params.id;
+  try {
+    const result = await Classes.findOne({ _id: id }).exec();
+    const datas = req.body.datas;
+    for (data of datas)
+    {
+      let tmp = true;
+      for (board of result.boardGrade)
+        if (board.studentID === data.studentID)
+        {
+          tmp = false;
+          board.name = data.name;
+          break;
+        }
+      if (tmp)
+        result.boardGrade.push(data);
+    }
+    Classes.findOneAndUpdate({_id: req.params.id}, {boardGrade: result.boardGrade}, {upsert: true}).exec()
+    res.send(result);
+  } catch (e) {
+    res.status(500).send(e);
+  }
+}
