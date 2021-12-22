@@ -31,6 +31,7 @@ exports.postClass = async (req, res) => {
 
 exports.detail = async (req, res, next) => {
   var id = req.params.id;
+  const user = await User.findOne({_id : req.user.id});
   try {
     const result = await Classes.findOne({ _id: id }).populate('teachers').populate('students').populate('grades').exec();
     for (grade of result.boardGrade){
@@ -40,7 +41,10 @@ exports.detail = async (req, res, next) => {
         for (point of _grade.pointStudent){
           if (point.studentID === grade.studentID)
             {
-              grade.point.push({pointGrade: _grade.point, point: point.point});
+              if (user && point.studentID === user.studentID && _grade.isFinal){ 
+                grade.isFinal = true
+              }
+                grade.point.push({idGrade: _grade._id, point: point.point});
               break
             }
         }
@@ -205,7 +209,6 @@ exports.boardGrade = async (req, res) =>{
         if (board.studentID === data.studentID)
         {
           tmp = false;
-          board.name = data.name;
           break;
         }
       if (tmp)

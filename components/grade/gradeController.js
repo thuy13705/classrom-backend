@@ -134,3 +134,47 @@ exports.pointAllGrade = async (req, res) =>{
     res.status(500).send(error);
   }
 }
+
+exports.sendPoint = async (req, res) =>{
+  try {
+    let message = "";
+
+    const result = await Grade.findOne({_id: req.params.id});
+
+    const body = req.body;
+    if (result){
+        for (point of result.pointStudent)
+          if(body.studentID === point.studentID)
+            {
+              tmp=false;
+              point.point = body.point;
+              break;
+            }
+      Grade.findOneAndUpdate({_id: req.params.id}, {pointStudent: result.pointStudent}, {upsert: true}).exec();
+    }
+    else {
+      message = "fail";
+    }
+    res.send(message);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
+
+exports.markFinal = async (req, res) =>{
+  try {
+    let message = "";
+
+    const result = await Grade.findOne({_id: req.params.id});
+
+    if (result){
+      Grade.findOneAndUpdate({_id: req.params.id}, {isFinal: true}, {upsert: true}).exec();
+    }
+    else {
+      message = "fail";
+    }
+    res.send(message);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
