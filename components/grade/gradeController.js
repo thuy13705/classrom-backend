@@ -80,6 +80,7 @@ exports.edit = async (req, res) =>{
     res.status(500).send(error);
   }
 }
+
 exports.postDeleteGrade = async function (req, res) {
   try{
   let message = "";
@@ -132,5 +133,45 @@ exports.pointAllGrade = async (req, res) =>{
     res.send(message);
   } catch (error) {
     res.status(500).send(error);
+  }
+}
+
+exports.sendPoint = async (req, res) => {
+ 
+  try {
+    let message = "";
+
+    let result = await Grade.findOne({_id: req.params.id});
+
+    if (result){
+      console.lod(result);
+      
+        
+        for (point of result.pointStudent)
+          if(req.body.student === point.studentID)
+            {
+              
+              point.isComplete = true;
+              break;
+            }
+       
+      
+      Grade.findOneAndUpdate({_id: req.params.id}, {pointStudent: result.pointStudent}, {upsert: true}).exec();
+    }
+    else {
+      message = "fail";
+    }
+    res.send(message);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
+
+exports.getPoint = async (req, res) => {
+  try{
+    let result = await Grade.find({studentID: req.params.id});
+    console.log(result);
+  }catch (error) {
+      res.status(500).send(error);
   }
 }
