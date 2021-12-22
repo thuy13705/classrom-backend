@@ -12,4 +12,8 @@ router.post('/edit/:id',gradeController.edit);
 
 router.post('/pushAllPoint/:id', gradeController.pointAllGrade);
 
+router.post('/sendPoint/:id', gradeController.sendPoint);
+
+router.post('/markFinal/:id', gradeController.markFinal);
+
 module.exports = router;

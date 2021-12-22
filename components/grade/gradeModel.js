@@ -5,6 +5,7 @@ const gradeSchame=new Schema({
     name:{type:String, require:true},
     point:{type:Number,required:true},
     pointStudent:[],
+    isFinal: Boolean
 });
 
 module.exports = mongoose.model('Grade', gradeSchame);
