@@ -36,8 +36,6 @@ exports.postAddGrade = async function (req, res) {
 exports.sort = async (req, res) => {
   try {
     let message = "";
-    console.log(req.body);
-
     Classes.findOne({ _id: req.params.id }, function (err, classes) {
       if (!err) {
         classes.grades = [];
@@ -119,16 +117,18 @@ exports.pointAllGrade = async (req, res) => {
     if (result) {
       for (data of datas) {
         let tmp = true;
-        for (point of result.pointStudent)
-          if (data.studentID === point.studentID) {
-            tmp = false;
-            point.point = data.point;
-            break;
-          }
-        if (tmp)
-          result.pointStudent.push(data);
+
+        for (point of result.studentPointList)
+          if(data.studentID === point.studentID)
+            {
+              tmp=false;
+              point.point = data.point;
+              break;
+            }
+        if (tmp) 
+            result.studentPointList.push(data);
       }
-      Grade.findOneAndUpdate({ _id: req.params.id }, { pointStudent: result.pointStudent }, { upsert: true }).exec();
+      Grade.findOneAndUpdate({_id: req.params.id}, {studentPointList: result.studentPointList}, {upsert: true}).exec();
     }
     else {
       message = "fail";
@@ -146,14 +146,21 @@ exports.sendPoint = async (req, res) => {
     const result = await Grade.findOne({ _id: req.params.id });
 
     const body = req.body;
-    if (result) {
-      for (point of result.pointStudent)
-        if (body.studentID === point.studentID) {
-          tmp = false;
-          point.point = body.point;
-          break;
+
+    if (result){
+      if (result.studentPointList){
+        let tmp=true;
+        for (point of result.studentPointList)
+          if(body.studentID === point.studentID)
+            {
+              tmp=false;
+              point.point = body.point;
+              break;
+            }
+        if (tmp)
+            result.studentPointList.push({studentID: body.studentID,point: body.point})
+        Grade.findOneAndUpdate({_id: req.params.id}, {studentPointList: result.studentPointList}, {upsert: true}).exec();
         }
-      Grade.findOneAndUpdate({ _id: req.params.id }, { pointStudent: result.pointStudent }, { upsert: true }).exec();
     }
     else {
       message = "fail";

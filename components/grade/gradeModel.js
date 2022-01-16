@@ -4,7 +4,7 @@ const Schema=mongoose.Schema;
 const gradeSchame=new Schema({
     name:{type:String, require:true},
     point:{type:Number,required:true},
-    pointStudent:[],
+    studentPointList:[],
     isFinal: Boolean
 });
 
