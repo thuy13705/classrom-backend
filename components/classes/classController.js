@@ -65,8 +65,8 @@ exports.getLinkInviteTeacher = async function (req, res, next) {
   try {
     let result="";
     const id = new mongoose.Types.ObjectId(req.user.id);
-    const teachers = await Classes.find({_id:req.params.id,teachers: id }).populate('teachers').populate('students').exec();
-    const students = await Classes.find({_id:req.params.id,students: id }).populate('teachers').populate('students').exec();
+    const teachers = await Classes.find({_id:req.params.id, teachers: id }).populate('teachers').populate('students').exec();
+    const students = await Classes.find({_id:req.params.id, students: id }).populate('teachers').populate('students').exec();
     if (teachers.length===0 && students.length===0){
       result="success";
       const updateClass = await Classes.findOneAndUpdate({ _id: req.params.id }, { $push: { teachers: req.user.id } }).exec();
