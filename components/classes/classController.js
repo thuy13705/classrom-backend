@@ -34,20 +34,25 @@ exports.detail = async (req, res, next) => {
   const user = await User.findOne({_id : req.user.id});
   try {
     const result = await Classes.findOne({ _id: id }).populate('teachers').populate('students').populate('grades').exec();
-    for (grade of result.boardGrade){
+    for (grade of result.gradeBoard){
       grade.point = [];
+      if (user && user.studentID === grade.studentID)
+        grade.isOwner = true;
+      if (result.grades.length > 0)
       for (_grade of result.grades)
       {
-        for (point of _grade.pointStudent){
+        let tmp = true;
+        if (_grade.studentPointList.length > 0)
+        for (point of _grade.studentPointList){
           if (point.studentID === grade.studentID)
             {
-              if (user && point.studentID === user.studentID && _grade.isFinal){ 
-                grade.isFinal = true
-              }
-                grade.point.push({idGrade: _grade._id, point: point.point});
-              break
+              tmp = false;
+              grade.point.push({grade: _grade, point: point.point});
+              break;
             }
         }
+        if (tmp)
+          grade.point.push({grade: _grade, point: 0});
       }
     }
     res.send(result);
@@ -197,7 +202,7 @@ exports.sendMailTeacher = async (req, res) => {
     });  
 }
 
-exports.boardGrade = async (req, res) =>{
+exports.gradeBoard = async (req, res) =>{
   const id = req.params.id;
   try {
     const result = await Classes.findOne({ _id: id }).exec();
@@ -205,16 +210,16 @@ exports.boardGrade = async (req, res) =>{
     for (data of datas)
     {
       let tmp = true;
-      for (board of result.boardGrade)
+      for (board of result.gradeBoard)
         if (board.studentID === data.studentID)
         {
           tmp = false;
           break;
         }
       if (tmp)
-        result.boardGrade.push(data);
+        result.gradeBoard.push(data);
     }
-    Classes.findOneAndUpdate({_id: req.params.id}, {boardGrade: result.boardGrade}, {upsert: true}).exec()
+    Classes.findOneAndUpdate({_id: req.params.id}, {gradeBoard: result.gradeBoard}, {upsert: true}).exec()
     res.send(result);
   } catch (e) {
     res.status(500).send(e);

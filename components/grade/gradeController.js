@@ -33,7 +33,6 @@ exports.postAddGrade = async function (req, res) {
 exports.sort = async (req, res) =>{
   try {
     let message = "";
-    console.log(req.body);
     
     Classes.findOne({ _id: req.params.id }, function (err, classes) {
       if (!err) {
@@ -114,7 +113,7 @@ exports.pointAllGrade = async (req, res) =>{
     if (result){
       for (data of datas){
         let tmp = true;
-        for (point of result.pointStudent)
+        for (point of result.studentPointList)
           if(data.studentID === point.studentID)
             {
               tmp=false;
@@ -122,9 +121,9 @@ exports.pointAllGrade = async (req, res) =>{
               break;
             }
         if (tmp) 
-            result.pointStudent.push(data);
+            result.studentPointList.push(data);
       }
-      Grade.findOneAndUpdate({_id: req.params.id}, {pointStudent: result.pointStudent}, {upsert: true}).exec();
+      Grade.findOneAndUpdate({_id: req.params.id}, {studentPointList: result.studentPointList}, {upsert: true}).exec();
     }
     else {
       message = "fail";
@@ -143,14 +142,19 @@ exports.sendPoint = async (req, res) =>{
 
     const body = req.body;
     if (result){
-        for (point of result.pointStudent)
+      if (result.studentPointList){
+        let tmp=true;
+        for (point of result.studentPointList)
           if(body.studentID === point.studentID)
             {
               tmp=false;
               point.point = body.point;
               break;
             }
-      Grade.findOneAndUpdate({_id: req.params.id}, {pointStudent: result.pointStudent}, {upsert: true}).exec();
+        if (tmp)
+            result.studentPointList.push({studentID: body.studentID,point: body.point})
+        Grade.findOneAndUpdate({_id: req.params.id}, {studentPointList: result.studentPointList}, {upsert: true}).exec();
+        }
     }
     else {
       message = "fail";
