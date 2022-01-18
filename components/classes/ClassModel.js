@@ -11,5 +11,7 @@ var classSchema=new Schema({
     grades:[{ type: mongoose.Types.ObjectId, ref: 'Grade' }],
     gradeBoard:[],
     totalGrade:{type:Number,default:0},
+    code:{type:String, default:""},
+    date:{type: String, default:""},
 });
 module.exports = mongoose.model('Class', classSchema);

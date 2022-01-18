@@ -8,6 +8,8 @@ router.get('/', classController.classes);
 
 router.post('/', classController.postClass);
 
+router.get('/getAllClass', classController.getAllClass);
+
 router.get('/:id', classController.detail);
 
 router.get('/invite/1/:id', classController.getLinkInviteStudent);
@@ -19,5 +21,7 @@ router.post('/sendMailStudent/:id', classController.sendMailStudent);
 router.post('/sendMailTeacher/:id', classController.sendMailTeacher);
 
 router.post('/gradeBoard/:id', classController.gradeBoard);
+
+router.get('/inviteByCode/:id', classController.inviteByCode);
 
 module.exports = router;

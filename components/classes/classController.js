@@ -22,6 +22,14 @@ exports.postClass = async (req, res) => {
     newClass.category = req.body.category;
     newClass.room = req.body.room;
     newClass.teachers.push(req.user.id);
+    let code = randomString(6);
+    while (await Classes.findOne({code: code})){
+      code = randomString(6);
+    }
+    newClass.code = code;
+    var d = new Date();
+    newClass.date = d.getFullYear().toString() +"-" + (parseInt(d.getMonth())+1).toString() + "-" + d.getDate().toString()+"-" + d.getHours().toString()+"-" + d.getMinutes().toString()+"-"+d.getSeconds().toString();
+
     const result = await newClass.save();
     res.send(result);
   } catch (error) {
@@ -97,6 +105,41 @@ exports.getLinkInviteStudent = async function (req, res, next) {
     } catch (error) {
       res.status(500).send(error);
     }
+}
+
+exports.inviteByCode = async (req, res, next) => {
+  try {
+    let result="";
+    const id = new mongoose.Types.ObjectId(req.user.id);
+    if (!await Classes.findOne({code: req.params.id}))
+      return res.send({result: result});
+    const teachers = await Classes.find({code:req.params.id,teachers: id }).populate('teachers').populate('students').exec();
+    const students = await Classes.find({code:req.params.id,students: id }).populate('teachers').populate('students').exec();
+    if (teachers.length===0 && students.length===0){
+      result="success";
+      await Classes.findOneAndUpdate({ code: req.params.id }, { $push: { students: req.user.id } }).exec();
+    }
+    else{
+      result="Exist";
+    }
+    res.send({result: result});
+  } catch (error) {
+    res.status(500).send({error: error});
+  }
+}
+
+exports.getAllClass = async (req, res) => {
+  try {
+    const page=req.query.page || 1;
+    const perPage = req.query.perPage || 30;
+    const sort = req.query.sort || -1;
+    const name = req.query.name || "";
+    const result =await Classes.find({nameClass: { $regex: '.*' + name + '.*' }}).skip(parseInt(perPage)*(parseInt(page)-1)).limit(parseInt(perPage)).sort({'date': parseInt(sort)}).exec();
+    const count =await Classes.count({nameClass: { $regex: '.*' + name + '.*' }});
+    res.send({result: result, count: count, perPage: perPage});
+  } catch (e) {
+    res.status(500).send(error);
+  }
 }
 
 
@@ -224,4 +267,14 @@ exports.gradeBoard = async (req, res) =>{
   } catch (e) {
     res.status(500).send(e);
   }
+}
+
+function randomString(length){
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
 }
