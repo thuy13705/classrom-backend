@@ -229,6 +229,8 @@ exports.loginGoogle = async (req, res) => {
     newUser.email = req.body.googleResponse.email;
     newUser.role = "user";
     newUser.isLock = false;
+    var d = new Date();
+    newUser.date = d.getFullYear().toString() +"-" + (parseInt(d.getMonth())+1).toString() + "-" + d.getDate().toString()+"-" + d.getHours().toString()+"-" + d.getMinutes().toString()+"-"+d.getSeconds().toString();
 
     const isEmail = await User.findOne({email: req.body.googleResponse.email});
     let curUser;
