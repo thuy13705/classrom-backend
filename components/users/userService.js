@@ -11,7 +11,7 @@ exports.checkLogin=async (Username, Password)=>
     if (!isUser)
         return false;
     let checkPassword= await bcrypt.compare(Password, isUser.password);
-    if (checkPassword)
+    if (checkPassword && !isUser.isLock) 
     {
         return isUser;
     }

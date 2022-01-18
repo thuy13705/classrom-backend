@@ -9,6 +9,9 @@ const userSchema=new Schema({
     studentID:{type:String, default:""},
     name:{type:String, default:""},
     gender:{type:String, default:""},
+    role:{type:String, default:""},
+    isLock:{type:Boolean, default:false},
+    date:{type: String, default:""},
 });
 
 module.exports = mongoose.model("User", userSchema)
