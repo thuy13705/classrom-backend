@@ -9,7 +9,6 @@ const userSchema=new Schema({
     studentID:{type:String, default:""},
     name:{type:String, default:""},
     gender:{type:String, default:""},
-    notifications:[{ type: mongoose.Types.ObjectId, ref: 'Notification' }]
 });
 
 module.exports = mongoose.model("User", userSchema)

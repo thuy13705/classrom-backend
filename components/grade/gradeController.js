@@ -179,17 +179,21 @@ exports.markFinal = async (req, res) => {
 
     if (result) {
       await Grade.findOneAndUpdate({ _id: req.params.id }, { isFinal: true }, { upsert: true }).exec();
-      for (student of result.pointStudent) {
+      console.log("hic");
+      for (student of result.studentPointList) {
+        console.log("huhu");
         const userResult = await User.findOne({ studentID: student.studentID }).exec();
+        console.log("hi");
         const idStudent = new mongoose.Types.ObjectId(userResult._id);
         const idGrade = new mongoose.Types.ObjectId(result._id);
         const isClass = await Classes.find({ students: idStudent, grades: idGrade }).exec();
+        console.log(isClass);
         if (isClass.length>0) {
           var newNoti = new Notification();
           newNoti.grade=result._id;
           newNoti.description ="finished";
-          newNoti.userRecieve=req.user.id;
-          newNoti.user=userResult._id;
+          newNoti.user=req.user.id;
+          newNoti.userRecieve=userResult._id;
           await newNoti.save();
         }
       }

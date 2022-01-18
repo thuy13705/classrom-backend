@@ -15,6 +15,7 @@ const usersRouter = require('./components/users');
 const classesRouter = require('./components/classes');
 const gradeRouter = require('./components/grade');
 const NotiRouter = require('./components/notifications');
+const ReviewRouter=require('./components/review');
 
 
 const app = express();
@@ -46,7 +47,7 @@ app.use('/', indexRouter);
 app.use('/classes', passport.authenticate('jwt', {session: false}), classesRouter);
 app.use('/grade', passport.authenticate('jwt', {session: false}),gradeRouter);
 app.use('/notification', passport.authenticate('jwt', {session: false}),NotiRouter);
-
+app.use('/review', passport.authenticate('jwt', {session: false}),ReviewRouter);
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
