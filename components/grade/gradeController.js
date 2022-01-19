@@ -24,11 +24,11 @@ exports.postAddGrade = async function (req, res) {
     }
     else {
       const deleGrade = await Grade.findByIdAndDelete({ _id: newGrade._id });
-      message = "fail";
+      message = "failed";
     }
-    res.send(message);
+    res.json(message);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).json(error);
   }
 }
 
@@ -46,12 +46,12 @@ exports.sort = async (req, res) => {
         message = "success";
       }
       else
-        message = "fail";
+        message = "failed";
     });
 
-    res.send(message);
+    res.json(message);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).json(error);
   }
 }
 
@@ -74,11 +74,11 @@ exports.edit = async (req, res) => {
       })
     }
     else {
-      message = "fail";
+      message = "failed";
     }
-    res.send(message);
+    res.json(message);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).json(error);
   }
 }
 exports.postDeleteGrade = async function (req, res) {
@@ -97,12 +97,12 @@ exports.postDeleteGrade = async function (req, res) {
         message = "succcess";
       }
       else {
-        message = "fail";
+        message = "failed";
       }
     })
-    res.send(message);
+    res.json(message);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).json(error);
   }
 }
 
@@ -131,11 +131,11 @@ exports.pointAllGrade = async (req, res) => {
       Grade.findOneAndUpdate({_id: req.params.id}, {studentPointList: result.studentPointList}, {upsert: true}).exec();
     }
     else {
-      message = "fail";
+      message = "failed";
     }
-    res.send(message);
+    res.json(message);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).json(error);
   }
 }
 
@@ -163,9 +163,9 @@ exports.sendPoint = async (req, res) => {
         }
     }
     else {
-      message = "fail";
+      message = "failed";
     }
-    res.send(message);
+    res.json(message);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -179,11 +179,8 @@ exports.markFinal = async (req, res) => {
 
     if (result) {
       await Grade.findOneAndUpdate({ _id: req.params.id }, { isFinal: true }, { upsert: true }).exec();
-      console.log("hic");
       for (student of result.studentPointList) {
-        console.log("huhu");
         const userResult = await User.findOne({ studentID: student.studentID }).exec();
-        console.log("hi");
         const idStudent = new mongoose.Types.ObjectId(userResult._id);
         const idGrade = new mongoose.Types.ObjectId(result._id);
         const isClass = await Classes.find({ students: idStudent, grades: idGrade }).exec();
@@ -199,10 +196,10 @@ exports.markFinal = async (req, res) => {
       }
     }
     else {
-      message = "fail";
+      message = "failed";
     }
-    res.send(message);
+    res.json(message);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).json(error);
   }
 }

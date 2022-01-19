@@ -9,7 +9,7 @@ exports.classes = async (req, res, next) => {
     const id = new mongoose.Types.ObjectId(req.user.id);
     response.students = await Classes.find({ students: id }).populate('students').populate('teachers').exec();
     response.teachers = await Classes.find({ teachers: id }).populate('teachers').populate('students').exec();
-    res.send(response);
+    res.json(response);
   } catch (e) {
     res.status(500).send(error);
   }
@@ -31,7 +31,7 @@ exports.postClass = async (req, res) => {
     newClass.date = d.getFullYear().toString() +"-" + (parseInt(d.getMonth())+1).toString() + "-" + d.getDate().toString()+"-" + d.getHours().toString()+"-" + d.getMinutes().toString()+"-"+d.getSeconds().toString();
 
     const result = await newClass.save();
-    res.send(result);
+    res.json(result);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -63,7 +63,7 @@ exports.detail = async (req, res, next) => {
           grade.point.push({grade: _grade, point: 0});
       }
     }
-    res.send(result);
+    res.json(result);
   } catch (e) {
     res.status(500).send(e);
   }
@@ -82,7 +82,7 @@ exports.getLinkInviteTeacher = async function (req, res, next) {
     else{
       result="Exist";
     }
-    res.send(result);
+    res.json(result);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -101,7 +101,7 @@ exports.getLinkInviteStudent = async function (req, res, next) {
       else{
         result="Exist";
       }
-      res.send(result);
+      res.json(result);
     } catch (error) {
       res.status(500).send(error);
     }
@@ -122,7 +122,7 @@ exports.inviteByCode = async (req, res, next) => {
     else{
       result="Exist";
     }
-    res.send({result: result});
+    res.json({result: result});
   } catch (error) {
     res.status(500).send({error: error});
   }
@@ -136,7 +136,7 @@ exports.getAllClass = async (req, res) => {
     const name = req.query.name || "";
     const result =await Classes.find({nameClass: { $regex: '.*' + name + '.*' }}).skip(parseInt(perPage)*(parseInt(page)-1)).limit(parseInt(perPage)).sort({'date': parseInt(sort)}).exec();
     const count =await Classes.count({nameClass: { $regex: '.*' + name + '.*' }});
-    res.send({result: result, count: count, perPage: perPage});
+    res.json({result: result, count: count, perPage: perPage});
   } catch (e) {
     res.status(500).send(error);
   }
@@ -263,7 +263,7 @@ exports.gradeBoard = async (req, res) =>{
         result.gradeBoard.push(data);
     }
     Classes.findOneAndUpdate({_id: req.params.id}, {gradeBoard: result.gradeBoard}, {upsert: true}).exec()
-    res.send(result);
+    res.json(result);
   } catch (e) {
     res.status(500).send(e);
   }
@@ -277,4 +277,22 @@ function randomString(length){
        result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
+}
+
+exports.checkRole = async (req, res, next) => {
+  try {
+    let response = "not";
+    const id = new mongoose.Types.ObjectId(req.user.id);
+    const students= await Classes.findOne({_id:req.params.id,students:id}).exec();
+    const teachers = await Classes.findOne({_id:req.params.id,teachers:id}).exec();
+    if (students){
+      response="student";
+    }
+    if (teachers){
+      response="teacher";
+    }
+    res.json(response);
+  } catch (e) {
+    res.status(500).send(error);
+  }
 }

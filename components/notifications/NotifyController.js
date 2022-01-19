@@ -11,7 +11,7 @@ exports.getNotification = async function (req, res) {
       .sort({ time: -1 })
       .exec();
     console.log(result);
-    res.send(result);
+    res.json(result);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -25,7 +25,7 @@ exports.postNotificaton = async function (req, res) {
     if (result) {
       message = "success";
     }
-    res.send(message);
+    res.json(message);
   } catch (error) {
     res.status(500).send(error);
   }

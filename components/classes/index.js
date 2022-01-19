@@ -24,4 +24,6 @@ router.post('/gradeBoard/:id', classController.gradeBoard);
 
 router.get('/inviteByCode/:id', classController.inviteByCode);
 
+router.get('/check/:id', classController.checkRole);
+
 module.exports = router;

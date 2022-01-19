@@ -19,9 +19,9 @@ async function isExist(idGrade, studentID, id) {
       if (student.studentID === studentID) {
         //tìm user có studentID ở trên.
         const userResult = await User.findOne({ studentID: student.studentID }).exec();
-        //nếu tại
+        //nếu tồn tại
         if (userResult) {
-          const isClass = await Classes.findOne({ grade: idGrade, studens: userResult._id })
+          const isClass = await Classes.findOne({ grade: idGrade, students: userResult._id })
           //kiem tra trong lop co sv đó ko?
           if (isClass) {
             const idUser = new mongoose.Types.ObjectId(id);
@@ -90,7 +90,7 @@ exports.getGradeReviewer = async function (req, res) {
       }
     }
     console.log(response);
-    res.send(response);
+    res.json(response);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -146,7 +146,7 @@ exports.getDetailGradeReview = async function (req, res) {
         }
       }
     }
-    res.send(response);
+    res.json(response);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -193,7 +193,7 @@ exports.postRequestReview = async function (req, res) {
     }
     else response = "grade"
     console.log(response);
-    res.send(response);
+    res.json(response);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -218,7 +218,7 @@ exports.postResponseReview = async function (req, res) {
         response = "success";
       }
     }
-    res.send(response);
+    res.json(response);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -230,12 +230,14 @@ exports.postComment = async function (req, res) {
     const review = await Review.findById(req.params.idReview).populate('grade').exec();
     if (review) {
       const check = await isExist(review.grade._id, review.studentID, req.user.id);
+      console.log(check);
       const isClass = await Classes.findOne({ grades: review.grade._id }).populate('teachers').exec();
       let model = new Comment();
       model.user=req.user.id;
       model.message=req.body.message;
-      if (check == 1) {
+      if (check === 1) {
         if (isClass) {
+
           const comment = await model.save();
           if (comment) {
             const reviewUpdate = await Review.findOneAndUpdate({ _id: req.params.idReview }, { $push: { comment: comment._id } }).populate('grade').exec();
@@ -251,7 +253,7 @@ exports.postComment = async function (req, res) {
           }
         }
       }
-      else if (check == 0) {
+      else if (check === 0) {
         if (isClass) {
           const comment = await model.save();
           if (comment) {
@@ -270,7 +272,7 @@ exports.postComment = async function (req, res) {
         }
       }
     }
-    res.send(response);
+    res.json(response);
   } catch (error) {
     res.status(500).send(error);
   }

@@ -141,7 +141,7 @@ exports.getListAccountUser = async(req,res) => {
     const email = req.query.email || "";
     const result =await User.find({name: { $regex: '.*' + name + '.*' }, email:{ $regex: '.*' + email + '.*' }, role:"user"}).skip(parseInt(perPage)*(parseInt(page)-1)).limit(parseInt(perPage)).sort({'date': parseInt(sort)}).exec();
     const count =await User.count({name: { $regex: '.*' + name + '.*' }, email:{ $regex: '.*' + email + '.*' }, role:"user"});
-    res.send({result: result, count:count, perPage: perPage});
+    res.json({result: result, count:count, perPage: perPage});
 }
 
 exports.getListAccountAdmin = async(req,res) => {
@@ -153,7 +153,7 @@ exports.getListAccountAdmin = async(req,res) => {
     const result =await User.find({name: { $regex: '.*' + name + '.*' }, email:{ $regex: '.*' + email + '.*' }, role:"admin"}).skip(parseInt(perPage)*(parseInt(page)-1)).limit(parseInt(perPage)).sort({'date': parseInt(sort)}).exec();
 
     const count =await User.count({name: { $regex: '.*' + name + '.*' }, email:{ $regex: '.*' + email + '.*' }, role:"admin"});
-    res.send({result: result, count:count, perPage: perPage});
+    res.json({result: result, count:count, perPage: perPage});
 }
 
 exports.createAdmin = async(req,res) => {
@@ -229,8 +229,6 @@ exports.loginGoogle = async (req, res) => {
     newUser.email = req.body.googleResponse.email;
     newUser.role = "user";
     newUser.isLock = false;
-    var d = new Date();
-    newUser.date = d.getFullYear().toString() +"-" + (parseInt(d.getMonth())+1).toString() + "-" + d.getDate().toString()+"-" + d.getHours().toString()+"-" + d.getMinutes().toString()+"-"+d.getSeconds().toString();
 
     const isEmail = await User.findOne({email: req.body.googleResponse.email});
     let curUser;
