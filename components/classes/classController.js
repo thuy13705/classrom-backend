@@ -42,25 +42,27 @@ exports.detail = async (req, res, next) => {
   const user = await User.findOne({_id : req.user.id});
   try {
     const result = await Classes.findOne({ _id: id }).populate('teachers').populate('students').populate('grades').exec();
-    for (grade of result.gradeBoard){
-      grade.point = [];
-      if (user && user.studentID === grade.studentID)
-        grade.isOwner = true;
-      if (result.grades.length > 0)
-      for (_grade of result.grades)
-      {
-        let tmp = true;
-        if (_grade.studentPointList.length > 0)
-        for (point of _grade.studentPointList){
-          if (point.studentID === grade.studentID)
-            {
-              tmp = false;
-              grade.point.push({grade: _grade, point: point.point});
-              break;
-            }
+    if (result){
+      for (grade of result.gradeBoard){
+        grade.point = [];
+        if (user && user.studentID === grade.studentID)
+          grade.isOwner = true;
+        if (result.grades.length > 0)
+        for (_grade of result.grades)
+        {
+          let tmp = true;
+          if (_grade.studentPointList.length > 0)
+          for (point of _grade.studentPointList){
+            if (point.studentID === grade.studentID)
+              {
+                tmp = false;
+                grade.point.push({grade: _grade, point: point.point});
+                break;
+              }
+          }
+          if (tmp)
+            grade.point.push({grade: _grade, point: 0});
         }
-        if (tmp)
-          grade.point.push({grade: _grade, point: 0});
       }
     }
     res.json(result);
