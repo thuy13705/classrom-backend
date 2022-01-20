@@ -7,7 +7,7 @@ exports.getNotification = async function (req, res) {
   try {
     const id = new mongoose.Types.ObjectId(req.user.id);
     const result = await Notification.find({ userRecieve: id, isDelete: false })
-      .populate([{ path: 'grade' }, { path: 'user' }, { path: 'userRecieve' }])
+      .populate('grade').populate('user').populate('userRecieve')
       .sort({ time: -1 })
       .exec();
     console.log(result);
