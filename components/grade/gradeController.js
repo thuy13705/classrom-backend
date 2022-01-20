@@ -119,16 +119,15 @@ exports.pointAllGrade = async (req, res) => {
         let tmp = true;
 
         for (point of result.studentPointList)
-          if(data.studentID === point.studentID)
-            {
-              tmp=false;
-              point.point = data.point;
-              break;
-            }
-        if (tmp) 
-            result.studentPointList.push(data);
+          if (data.studentID === point.studentID) {
+            tmp = false;
+            point.point = data.point;
+            break;
+          }
+        if (tmp)
+          result.studentPointList.push(data);
       }
-      Grade.findOneAndUpdate({_id: req.params.id}, {studentPointList: result.studentPointList}, {upsert: true}).exec();
+      Grade.findOneAndUpdate({ _id: req.params.id }, { studentPointList: result.studentPointList }, { upsert: true }).exec();
     }
     else {
       message = "failed";
@@ -147,20 +146,19 @@ exports.sendPoint = async (req, res) => {
 
     const body = req.body;
 
-    if (result){
-      if (result.studentPointList){
-        let tmp=true;
+    if (result) {
+      if (result.studentPointList) {
+        let tmp = true;
         for (point of result.studentPointList)
-          if(body.studentID === point.studentID)
-            {
-              tmp=false;
-              point.point = body.point;
-              break;
-            }
+          if (body.studentID === point.studentID) {
+            tmp = false;
+            point.point = body.point;
+            break;
+          }
         if (tmp)
-            result.studentPointList.push({studentID: body.studentID,point: body.point})
-        Grade.findOneAndUpdate({_id: req.params.id}, {studentPointList: result.studentPointList}, {upsert: true}).exec();
-        }
+          result.studentPointList.push({ studentID: body.studentID, point: body.point })
+        Grade.findOneAndUpdate({ _id: req.params.id }, { studentPointList: result.studentPointList }, { upsert: true }).exec();
+      }
     }
     else {
       message = "failed";
@@ -185,12 +183,12 @@ exports.markFinal = async (req, res) => {
         const idGrade = new mongoose.Types.ObjectId(result._id);
         const isClass = await Classes.find({ students: idStudent, grades: idGrade }).exec();
         console.log(isClass);
-        if (isClass.length>0) {
+        if (isClass.length > 0) {
           var newNoti = new Notification();
-          newNoti.grade=result._id;
-          newNoti.description ="finished";
-          newNoti.user=req.user.id;
-          newNoti.userRecieve=userResult._id;
+          newNoti.grade = result._id;
+          newNoti.description = "finished";
+          newNoti.user = req.user.id;
+          newNoti.userRecieve = userResult._id;
           await newNoti.save();
         }
       }
@@ -199,6 +197,23 @@ exports.markFinal = async (req, res) => {
       message = "failed";
     }
     res.json(message);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+}
+
+exports.getCheckGrade = async (req, res) => {
+  try {
+    let response = "Failed";
+    const isGrade = await Grade.findOne({ _id: req.params.id }).exec();
+    if (isGrade) {
+      const isClass = await Classes.findOne({ grades: isGrade._id }).populate('teachers').populate('students').exec();
+
+      if (isClass) {
+        response=isClass;
+      }
+    }
+    res.json(response);
   } catch (error) {
     res.status(500).json(error);
   }

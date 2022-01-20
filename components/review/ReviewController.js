@@ -237,7 +237,27 @@ exports.postComment = async function (req, res) {
       model.message=req.body.message;
       if (check === 1) {
         if (isClass) {
+          const comment = await model.save();
+          if (comment) {
+            const reviewUpdate = await Review.findOneAndUpdate({ _id: req.params.idReview }, { $push: { comment: comment._id } }).populate('grade').exec();
+            const isUser = await User.findOne({ studentID: review.studentID }).exec();
+            console.log(isUser);
+            if (isUser) {
+              var newNoti = new Notification();
+              newNoti.grade = review.grade._id;
+              newNoti.description = "comment review grade";
+              newNoti.user = req.user.id;
+              newNoti.userRecieve = isUser._id;
+              await newNoti.save();
+              response = "success"
+            }
+          }
 
+        
+        }
+      }
+      else if (check === 0) {
+        if (isClass) {
           const comment = await model.save();
           if (comment) {
             const reviewUpdate = await Review.findOneAndUpdate({ _id: req.params.idReview }, { $push: { comment: comment._id } }).populate('grade').exec();
@@ -247,24 +267,6 @@ exports.postComment = async function (req, res) {
               newNoti.description = "comment review grade";
               newNoti.user = req.user.id;
               newNoti.userRecieve = teacher._id;
-              await newNoti.save();
-              response = "success"
-            }
-          }
-        }
-      }
-      else if (check === 0) {
-        if (isClass) {
-          const comment = await model.save();
-          if (comment) {
-            const reviewUpdate = await Review.findOneAndUpdate({ _id: req.params.idReview }, { $push: { comment: comment._id } }).populate('grade').exec();
-            const isUser = await User.findOne({ studentID: review.studentID }).exec();
-            if (isUser) {
-              var newNoti = new Notification();
-              newNoti.grade = review.grade._id;
-              newNoti.description = "comment review grade";
-              newNoti.user = req.user.id;
-              newNoti.userRecieve = isUser._id;
               await newNoti.save();
               response = "success"
             }

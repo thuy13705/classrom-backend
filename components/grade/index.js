@@ -16,4 +16,8 @@ router.post('/sendPoint/:id', gradeController.sendPoint);
 
 router.post('/markFinal/:id', gradeController.markFinal);
 
+router.get('/check/:id',gradeController.getCheckGrade);
+
+
+
 module.exports = router;
