@@ -243,7 +243,7 @@ exports.postComment = async function (req, res) {
             const reviewUpdate = await Review.findOneAndUpdate({ _id: req.params.idReview }, { $push: { comment: comment._id } }).populate('grade').exec();
             for (teacher of isClass.teachers) {
               var newNoti = new Notification();
-              newNoti.grade = req.body.grade;
+              newNoti.grade = review.grade._id;
               newNoti.description = "comment review grade";
               newNoti.user = req.user.id;
               newNoti.userRecieve = teacher._id;
@@ -261,7 +261,7 @@ exports.postComment = async function (req, res) {
             const isUser = await User.findOne({ studentID: review.studentID }).exec();
             if (isUser) {
               var newNoti = new Notification();
-              newNoti.grade = req.body.grade;
+              newNoti.grade = review.grade._id;
               newNoti.description = "comment review grade";
               newNoti.user = req.user.id;
               newNoti.userRecieve = isUser._id;
