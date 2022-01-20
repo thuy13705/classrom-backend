@@ -163,7 +163,6 @@ exports.postRequestReview = async function (req, res) {
         if (student.studentID === req.body.studentID) {
           const userResult = await User.findOne({ studentID: student.studentID }).exec();
           console.log(userResult._id + " " + req.user.id)
-          if (userResult && userResult._id == req.user.id) {
             const isClass = await Classes.findOne({ grades: req.body.grade }).populate('teachers').exec();
             if (isClass) {
               let model = new Review({
@@ -185,8 +184,6 @@ exports.postRequestReview = async function (req, res) {
                 }
               }
             }
-          }
-          else response = "user"
         }
         else response = "student"
       }
